@@ -3,9 +3,12 @@ from enum import Enum
 from random import randint
 import time
 import os
+import csv
+
 
 def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 
 class Color(Enum):
     RED = [255, 0, 0]
@@ -40,6 +43,7 @@ class Button():
 class SimonSays():
     buttons = []
     sequence = []
+    name = False
 
     def addButton(self, color, leds):
         self.buttons.append(Button(color, leds))
@@ -64,11 +68,13 @@ class SimonSays():
         print("Write your guesses with spaces separating the colours i.e., 'y b r g' for guessing yellow, blue, red and then green, in that order")
         playing = True
         points = 0
+        numSeq = []
         while playing:
             # Show colour
             rand = randint(0, len(self.buttons)-1)
             self.sequence.append(self.buttons[rand].color)
-            self.lightButton(rand, 1)
+            numSeq.append(rand)
+            self.displaySequence(numSeq)
             correct = self.parseGuess(
                 input("What was the sequence of lights?\n> "))
             if(correct):
@@ -76,8 +82,11 @@ class SimonSays():
                 cls()
                 print("That was correct. You have " + str(points) + " points")
             else:
-                print("That was incorrect. You finished with " + str(points) + " points")
+                print("That was incorrect. You finished with " +
+                      str(points) + " points")
                 print("The correct sequence was " + self.getStringSequence())
+                self.storeScore(points)
+                self.sequence = []
                 playing = False
 
     def parseGuess(self, guess):
@@ -87,7 +96,14 @@ class SimonSays():
                 continue
             else:
                 return False
-        return True
+        # Amount of colours guessed must be equal also
+        return len(self.sequence) == len(guessedSequence)
+
+    def displaySequence(self, numSeq):
+        for i in numSeq:
+            cls()
+            self.lightButton(i, 1)
+        cls()  # To erase the final light
 
     def getStringSequence(self):
         stringSeq = ""
@@ -96,12 +112,46 @@ class SimonSays():
         return stringSeq
 
     def start(self):
-        while True: 
-            option = input("Select which Simon you'd like to play: ")
+        while True:
+            self.renderMainMenu()
+            option = input("Select which an option: ")
             mode = {"1": self.textMode}
             toPlay = mode.get(option, False)
             if(toPlay):
                 toPlay()
+            else:
+                print("That was not a valid option. Please choose again.")
+
+    def renderMainMenu(self):
+        options = ["Text Based", "View Leaderboard"]
+        length = 40
+        i = 0
+        print("#"*length)
+        for option in options:
+            i += 1
+            print("# " + str(i) + ". " + option +
+                  " "*(length - 6 - len(option)) + "#")
+        print("#"*length)
+
+    def storeScore(self, points):
+        if(self.name == False):
+            # Only ask for name when necessary
+            self.name = input("What is your name? (for the leaderboard)\n> ")
+        csv = open("scores.csv", "w+")
+        scores = csv.readlines()
+        i = -1
+        saved = False
+        for line in scores:
+            i += 1
+            values = line.split(",")
+            if(values[0] == self.name and values[1] < points):
+                scores[i] = self.name + "," + points
+                csv.writelines(scores)
+                print("Your name has been updated in the leaderboard.")
+                saved = True
+
+        if(not saved):
+            print("Your name has been added to the leaderboard.")
 
 
 def set_pixel(pixel, color):
