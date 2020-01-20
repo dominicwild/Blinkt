@@ -46,7 +46,9 @@ class Button():
 class SimonSays():
     buttons = []
     sequence = []
-    name = False
+    numSeq = []
+    difficulty = -1
+    name = ""
     scoreFile = "scores.csv"
 
     def addButton(self, color, leds):
@@ -67,22 +69,60 @@ class SimonSays():
     def reset(self):
         clear()
 
+    def getNumberOfButtons(self):
+        return len(self.buttons)
+
+    def getButtonColour(self,index):
+        return self.buttons[index].color
+
+    #Since modes are only simplistic (only modifying points generated per round) no need to separate into classes. Although could be done in future if logic gets more complicated.
+    def classicMode(self):
+        rand = randint(0, self.getNumberOfButtons() - 1)
+        self.sequence.append(self.getButtonColour(rand))
+        self.numSeq.append(rand)
+
+        self.displaySequence(self.numSeq)
+        return 1
+    
+    def difficultyMode(self):
+    
+        while self.difficulty < 0:
+            print("In this mode you can create your own custom difficulty.")
+            try:
+                self.difficulty = int(input("Input a number to create your difficulty. The higher the number, the more lights you will have to remember in each round of the game, however the more points you'll get!\n> "))
+                if(self.difficulty < 0):
+                    print("That is not a valid difficulty, try again. It must be greater than zero.")
+            except Exception:
+                print("The difficulty must be a number.")
+                self.difficulty = -1
+            
+        for i in range(self.difficulty):
+            rand = randint(0, self.getNumberOfButtons() - 1)
+            self.sequence.append(self.getButtonColour(rand))
+            self.numSeq.append(rand)
+
+        self.displaySequence(self.numSeq)
+        return self.difficulty*self.difficulty
+
+        
+
     def textMode(self):
+        mode = "Invalid option"
+        while mode == "Invalid option":
+            self.renderMenu(["Classic Mode", "Difficulty Mode"])
+            option = input("Which mode do you want to play? (input the number):\n> ")
+            modes = {"1" : self.classicMode, "2": self.difficultyMode}
+            mode = modes.get(option, "Invalid option")
         print("Playing the text version of Simon.")
         print("Write your guesses with spaces separating the colours i.e., 'y b r g' for guessing yellow, blue, red and then green, in that order")
         playing = True
         points = 0
         numSeq = []
         while playing:
-            # Show colour
-            rand = randint(0, len(self.buttons)-1)
-            self.sequence.append(self.buttons[rand].color)
-            numSeq.append(rand)
-            self.displaySequence(numSeq)
-            correct = self.parseGuess(
-                input("What was the sequence of lights?\n> "))
-            if(correct):
-                points += 1
+            modifier = mode()
+            correct = self.parseGuess(input("What was the sequence of lights?\n> ").strip(" ")) #Trim so that extra spaces don't invalidate user input
+            if (correct):
+                points += 1*modifier
                 cls()
                 print("That was correct. You have " + str(points) + " points")
             else:
@@ -92,6 +132,11 @@ class SimonSays():
                 self.storeScore(points)
                 self.sequence = []
                 playing = False
+    
+    def resetGameState(self):
+        self.sequence = []
+        self.numSeq = []
+        self.difficulty = -1
 
     def parseGuess(self, guess):
         guessedSequence = guess.split(" ")
@@ -119,9 +164,9 @@ class SimonSays():
         while True:
             self.renderMenu(["Text Based", "View Leaderboard"])
             option = input("Select which an option: ")
-            mode = {"1": self.textMode}
+            mode = {"1": self.textMode, "2": self.printLeaderBoard}
             toPlay = mode.get(option, False)
-            if(toPlay):
+            if (toPlay):
                 toPlay()
             else:
                 print("That was not a valid option. Please choose again.")
@@ -132,14 +177,22 @@ class SimonSays():
         print("#"*length)
         for option in menu:
             i += 1
-            print("# " + str(i) + ". " + option +
-                  " "*(length - 6 - len(option)) + "#")
+            print("# " + str(i) + ". " + option +" "*(length - 5 - len(str(i)) - len(option)) + "#")
         print("#"*length)
 
-    def storeScore(self, points):
-        if(self.name == False):
-            # Only ask for name when necessary
+
+    def getName(self):
+        while len(self.name) == 0 or len(self.name) > 12:
+            if(len(self.name) == 0):
+                print("You must enter a name.")
+            if (len(self.name) > 12):
+                print("That name is too long.")
             self.name = input("What is your name? (for the leaderboard)\n> ")
+
+    def storeScore(self, points):
+        if(self.name == ""):
+            # Only ask for name when necessary
+            self.getName()
         try:
             with open(self.scoreFile, "r+") as scores, open("temp.csv", "w+", newline='') as temp:
                 writer = csv.writer(temp)
@@ -167,10 +220,19 @@ class SimonSays():
 
 
     def printLeaderBoard(self):
+        leaders = []
         with open(self.scoreFile, "r") as scores:
             reader = csv.reader(scores)
+            i= 0
+            negativePadding = 0
             for row in reader:
-                print("")
+                i += 1
+                if(len(str(i)) ==2 ):
+                    negativePadding = -1
+                leaders.append(row[0] + " "*(12 - len(row[0]) + negativePadding) + row[1])
+                if(i == 10):
+                    break
+        self.renderMenu(leaders)
 
 
 
