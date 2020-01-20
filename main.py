@@ -9,6 +9,9 @@ import csv
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def set_pixel(pixel, color):
+    value = color.value
+    set(pixel, value[0], value[1], value[2])
 
 class Color(Enum):
     RED = [255, 0, 0]
@@ -44,6 +47,7 @@ class SimonSays():
     buttons = []
     sequence = []
     name = False
+    scoreFile = "scores.csv"
 
     def addButton(self, color, leds):
         self.buttons.append(Button(color, leds))
@@ -113,7 +117,7 @@ class SimonSays():
 
     def start(self):
         while True:
-            self.renderMainMenu()
+            self.renderMenu(["Text Based", "View Leaderboard"])
             option = input("Select which an option: ")
             mode = {"1": self.textMode}
             toPlay = mode.get(option, False)
@@ -122,12 +126,11 @@ class SimonSays():
             else:
                 print("That was not a valid option. Please choose again.")
 
-    def renderMainMenu(self):
-        options = ["Text Based", "View Leaderboard"]
+    def renderMenu(self, menu):
         length = 40
         i = 0
         print("#"*length)
-        for option in options:
+        for option in menu:
             i += 1
             print("# " + str(i) + ". " + option +
                   " "*(length - 6 - len(option)) + "#")
@@ -137,26 +140,40 @@ class SimonSays():
         if(self.name == False):
             # Only ask for name when necessary
             self.name = input("What is your name? (for the leaderboard)\n> ")
-        csv = open("scores.csv", "w+")
-        scores = csv.readlines()
-        i = -1
-        saved = False
-        for line in scores:
-            i += 1
-            values = line.split(",")
-            if(values[0] == self.name and values[1] < points):
-                scores[i] = self.name + "," + points
-                csv.writelines(scores)
-                print("Your name has been updated in the leaderboard.")
-                saved = True
+        try:
+            with open(self.scoreFile, "r+") as scores, open("temp.csv", "w+", newline='') as temp:
+                writer = csv.writer(temp)
+                reader = sorted(csv.reader(scores), key=lambda row: row[1], reverse=True)
+                saved = False
+                for row in reader:
+                    if(row[0] == self.name):
+                        if(int(row[1]) < points):
+                            row[1] = points
+                            print("Your score has been updated in the leaderboard.")
+                        else:
+                            print("You already have a higher score in the leaderboard.")
+                        saved = True
+                    
+                if(saved == False):
+                    reader.append([self.name,points])
+                reader.sort(key=lambda row: int(row[1]),reverse=True) #Sort at saving, rather than leaderboard as this could be put on a background thread if it becomes cumbersome and users would get more frustrating if the leaderboard took a long time to load, than they would saving.
+                writer.writerows(reader)
 
-        if(not saved):
-            print("Your name has been added to the leaderboard.")
+        except Exception as e:
+            print(e)
 
 
-def set_pixel(pixel, color):
-    value = color.value
-    set(pixel, value[0], value[1], value[2])
+        os.replace("temp.csv", self.scoreFile)
+
+
+    def printLeaderBoard(self):
+        with open(self.scoreFile, "r") as scores:
+            reader = csv.reader(scores)
+            for row in reader:
+                print("")
+
+
+
 
 
 simon = SimonSays()
