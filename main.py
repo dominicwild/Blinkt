@@ -76,6 +76,29 @@ class SimonSays():
     def getButtonColour(self,index):
         return self.buttons[index].color
 
+    def getSpeed(self,options):
+        while self.speed < 0:
+            self.renderMenu(options)
+            print("In this mode you select a speed and the LEDs will stay lit for that duration.")
+            try:
+                self.speed = int(input("Select a speed\n> "))
+                if(self.speed < 0 and self.speed > 5):
+                    print("That is not a valid speed, try again. It must be one of the options above.")
+            except Exception:
+                print("The speed must be a number from the above.")
+                self.speed = -1
+
+    def getDifficulty(self):
+        while self.difficulty < 0:
+            print("In this mode you can create your own custom difficulty.")
+            try:
+                self.difficulty = int(input("Input a number to create your difficulty. The higher the number, the more lights you will have to remember in each round of the game, however the more points you'll get!\n> "))
+                if(self.difficulty < 0):
+                    print("That is not a valid difficulty, try again. It must be greater than zero.")
+            except Exception:
+                print("The difficulty must be a number.")
+                self.difficulty = -1
+
     #Since modes are only simplistic (only modifying points generated per round) no need to separate into classes. Although could be done in future if logic gets more complicated.
     def classicMode(self):
         rand = randint(0, self.getNumberOfButtons() - 1)
@@ -86,16 +109,8 @@ class SimonSays():
         return 1
     
     def difficultyMode(self):
-    
-        while self.difficulty < 0:
-            print("In this mode you can create your own custom difficulty.")
-            try:
-                self.difficulty = int(input("Input a number to create your difficulty. The higher the number, the more lights you will have to remember in each round of the game, however the more points you'll get!\n> "))
-                if(self.difficulty < 0):
-                    print("That is not a valid difficulty, try again. It must be greater than zero.")
-            except Exception:
-                print("The difficulty must be a number.")
-                self.difficulty = -1
+
+        self.getDifficulty()
             
         for i in range(self.difficulty):
             rand = randint(0, self.getNumberOfButtons() - 1)
@@ -111,16 +126,7 @@ class SimonSays():
         speeds = [2,1.5,1,0.5,0.25]
         modifiers = [0.25,0.5,1,2,4]
 
-        while self.speed < 0:
-            self.renderMenu(options)
-            print("In this mode you select a speed and the LEDs will stay lit for that duration.")
-            try:
-                self.speed = int(input("Select a speed\n> "))
-                if(self.speed < 0 and self.speed > 5):
-                    print("That is not a valid speed, try again. It must be one of the options above.")
-            except Exception:
-                print("The speed must be a number from the above.")
-                self.speed = -1
+        self.getSpeed(options)
 
         modifier =modifiers[self.speed-1]
         duration = speeds[self.speed-1] #Assign actual speed value
@@ -157,7 +163,7 @@ class SimonSays():
                       str(points) + " points")
                 print("The correct sequence was " + self.getStringSequence())
                 self.storeScore(points)
-                self.sequence = []
+                self.resetGameState()
                 playing = False
     
     def resetGameState(self):
@@ -228,7 +234,7 @@ class SimonSays():
                 saved = False
                 for row in reader:
                     if(row[0] == self.name):
-                        if(int(round(row[1])) < points):
+                        if(round(float(row[1])) < points):
                             row[1] = points
                             print("Your score has been updated in the leaderboard.")
                         else:
