@@ -69,6 +69,8 @@ class SimonSays():
         self.addButton(Color.GREEN, [2, 3])
         self.addButton(Color.YELLOW, [4, 5])
         self.addButton(Color.BLUE, [6, 7])
+        self.reset()
+        open(self.scoreFile, "a+").close()
 
     def addButton(self, color, leds):
         self.buttons.append(Button(color, leds))
@@ -203,6 +205,7 @@ class SimonSays():
         numSeq = []
         while playing:
             modifier = mode()
+            self.reset()
             correct = self.parseGuess(input("What was the sequence of lights?\n> ").strip(" ")) #Trim so that extra spaces don't invalidate user input
             if (correct):
                 points += 1*modifier
