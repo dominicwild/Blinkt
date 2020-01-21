@@ -48,6 +48,7 @@ class SimonSays():
     sequence = []
     numSeq = []
     difficulty = -1
+    speed = -1
     name = ""
     scoreFile = "scores.csv"
 
@@ -104,14 +105,40 @@ class SimonSays():
         self.displaySequence(self.numSeq)
         return self.difficulty*self.difficulty
 
-        
+    def speedRunMode(self):
+
+        options = ["Slowest", "Slow", "Normal", "Fast", "Fastest"]
+        speeds = [2,1.5,1,0.5,0.25]
+        modifiers = [0.25,0.5,1,2,4]
+
+        while self.speed < 0:
+            self.renderMenu(options)
+            print("In this mode you select a speed and the LEDs will stay lit for that duration.")
+            try:
+                self.speed = int(input("Select a speed\n> "))
+                if(self.speed < 0 and self.speed > 5):
+                    print("That is not a valid speed, try again. It must be one of the options above.")
+            except Exception:
+                print("The speed must be a number from the above.")
+                self.speed = -1
+
+        modifier =modifiers[self.speed-1]
+        duration = speeds[self.speed-1] #Assign actual speed value
+
+        rand = randint(0, self.getNumberOfButtons() - 1)
+        self.sequence.append(self.getButtonColour(rand))
+        self.numSeq.append(rand)
+
+        self.displaySequence(self.numSeq, duration)
+
+        return modifier
 
     def textMode(self):
         mode = "Invalid option"
         while mode == "Invalid option":
-            self.renderMenu(["Classic Mode", "Difficulty Mode"])
+            self.renderMenu(["Classic Mode", "Difficulty Mode", "Speed Run Mode"])
             option = input("Which mode do you want to play? (input the number):\n> ")
-            modes = {"1" : self.classicMode, "2": self.difficultyMode}
+            modes = {"1" : self.classicMode, "2": self.difficultyMode, "3": self.speedRunMode}
             mode = modes.get(option, "Invalid option")
         print("Playing the text version of Simon.")
         print("Write your guesses with spaces separating the colours i.e., 'y b r g' for guessing yellow, blue, red and then green, in that order")
@@ -137,6 +164,7 @@ class SimonSays():
         self.sequence = []
         self.numSeq = []
         self.difficulty = -1
+        self.speed = -1
 
     def parseGuess(self, guess):
         guessedSequence = guess.split(" ")
@@ -148,10 +176,10 @@ class SimonSays():
         # Amount of colours guessed must be equal also
         return len(self.sequence) == len(guessedSequence)
 
-    def displaySequence(self, numSeq):
+    def displaySequence(self, numSeq, duration=1):
         for i in numSeq:
             cls()
-            self.lightButton(i, 1)
+            self.lightButton(i, duration)
         cls()  # To erase the final light
 
     def getStringSequence(self):
@@ -200,7 +228,7 @@ class SimonSays():
                 saved = False
                 for row in reader:
                     if(row[0] == self.name):
-                        if(int(row[1]) < points):
+                        if(int(round(row[1])) < points):
                             row[1] = points
                             print("Your score has been updated in the leaderboard.")
                         else:
@@ -233,10 +261,6 @@ class SimonSays():
                 if(i == 10):
                     break
         self.renderMenu(leaders)
-
-
-
-
 
 simon = SimonSays()
 simon.addButton(Color.RED, [0, 1])
