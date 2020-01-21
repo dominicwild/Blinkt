@@ -18,6 +18,10 @@ class Color(Enum):
     GREEN = [0, 255, 0]
     BLUE = [0, 0, 255]
     YELLOW = [255, 225, 25]
+    WHITE = [255,255,255]
+    PURPLE = [145,30,180]
+    MAROON = [128,0,0]
+    ORANGE = [245,130,48]
 
     @staticmethod
     def toColor(text):
@@ -29,7 +33,15 @@ class Color(Enum):
             "g": Color.GREEN,
             "green": Color.GREEN,
             "y": Color.YELLOW,
-            "yellow": Color.YELLOW
+            "yellow": Color.YELLOW,
+            "w": Color.WHITE, 
+            "white": Color.WHITE,
+            "p": Color.PURPLE,
+            "purple": Color.PURPLE,
+            "m": Color.MAROON,
+            "maroon": Color.MAROON,
+            "o": Color.ORANGE,
+            "orange": Color.ORANGE
         }
         return switch.get(text.lower(), False)
 
@@ -52,13 +64,21 @@ class SimonSays():
     name = ""
     scoreFile = "scores.csv"
 
+    def __init__(self):
+        self.addButton(Color.RED, [0, 1])
+        self.addButton(Color.GREEN, [2, 3])
+        self.addButton(Color.YELLOW, [4, 5])
+        self.addButton(Color.BLUE, [6, 7])
+
     def addButton(self, color, leds):
         self.buttons.append(Button(color, leds))
 
     def lightButton(self, buttonNum, sleepTime=1):
         button = self.buttons[buttonNum]
-        set_pixel(button.leds[0], button.color)
-        set_pixel(button.leds[1], button.color)
+        for led in button.leds:
+            set_pixel(led, button.color)
+        # set_pixel(button.leds[0], button.color)
+        # set_pixel(button.leds[1], button.color)
         show()
         time.sleep(sleepTime)
         self.reset()
@@ -75,6 +95,15 @@ class SimonSays():
 
     def getButtonColour(self,index):
         return self.buttons[index].color
+
+    def deleteButtons(self):
+        self.buttons = []
+
+    def getButtonColours(self):
+        colors = []
+        for button in self.buttons:
+            colors.append(button.color)
+        return colors
 
     def getSpeed(self,options):
         while self.speed < 0:
@@ -139,12 +168,33 @@ class SimonSays():
 
         return modifier
 
+    def multiMode(self):
+
+        if(self.getNumberOfButtons() == 4):
+            print("In this mode instead of 4 buttons, there are 8 you must memorise.")
+            self.deleteButtons()
+            buttons = [[Color.RED, [0]],[Color.GREEN, [1]],[Color.YELLOW, [2]],[Color.BLUE, [3]],[Color.WHITE, [4]],[Color.ORANGE, [5]],[Color.MAROON, [6]],[Color.PURPLE, [7]]]
+            for button in buttons:
+                self.addButton(button[0], button[1])
+        
+        colorString = ""
+        for color in self.getButtonColours():
+            colorString += color.name + " "
+
+        rand = randint(0, self.getNumberOfButtons() - 1)
+        self.sequence.append(self.getButtonColour(rand))
+        self.numSeq.append(rand)
+
+        self.displaySequence(self.numSeq)
+        print("The available colours are: " + colorString) #Print colours in case user forgets or doesn't know what a particular colour may be
+        return 1 + 0.5*len(self.numSeq)
+
     def textMode(self):
         mode = "Invalid option"
         while mode == "Invalid option":
-            self.renderMenu(["Classic Mode", "Difficulty Mode", "Speed Run Mode"])
+            self.renderMenu(["Classic Mode", "Difficulty Mode", "Speed Run Mode", "Multi Mode"])
             option = input("Which mode do you want to play? (input the number):\n> ")
-            modes = {"1" : self.classicMode, "2": self.difficultyMode, "3": self.speedRunMode}
+            modes = {"1" : self.classicMode, "2": self.difficultyMode, "3": self.speedRunMode, "4" : self.multiMode}
             mode = modes.get(option, "Invalid option")
         print("Playing the text version of Simon.")
         print("Write your guesses with spaces separating the colours i.e., 'y b r g' for guessing yellow, blue, red and then green, in that order")
@@ -171,16 +221,25 @@ class SimonSays():
         self.numSeq = []
         self.difficulty = -1
         self.speed = -1
+        if(not self.getNumberOfButtons() == 4):
+            self.deleteButtons()
+            self.addButton(Color.RED, [0, 1])
+            self.addButton(Color.GREEN, [2, 3])
+            self.addButton(Color.YELLOW, [4, 5])
+            self.addButton(Color.BLUE, [6, 7])
 
     def parseGuess(self, guess):
         guessedSequence = guess.split(" ")
+        
+        if(not len(self.sequence) == len(guessedSequence)):
+            return False
+
         for i in range(len(self.sequence)):
             if(Color.toColor(guessedSequence[i]) == self.sequence[i]):
                 continue
             else:
                 return False
-        # Amount of colours guessed must be equal also
-        return len(self.sequence) == len(guessedSequence)
+        return True
 
     def displaySequence(self, numSeq, duration=1):
         for i in numSeq:
@@ -197,7 +256,7 @@ class SimonSays():
     def start(self):
         while True:
             self.renderMenu(["Text Based", "View Leaderboard"])
-            option = input("Select which an option: ")
+            option = input("Select an option: ")
             mode = {"1": self.textMode, "2": self.printLeaderBoard}
             toPlay = mode.get(option, False)
             if (toPlay):
@@ -269,9 +328,5 @@ class SimonSays():
         self.renderMenu(leaders)
 
 simon = SimonSays()
-simon.addButton(Color.RED, [0, 1])
-simon.addButton(Color.GREEN, [2, 3])
-simon.addButton(Color.YELLOW, [4, 5])
-simon.addButton(Color.BLUE, [6, 7])
 
 simon.start()
