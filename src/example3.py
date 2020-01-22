@@ -9,6 +9,8 @@ fps = 60
 size = width, height = [1000, 900]
 midpoint = (width / 2, height / 2)
 bg = [255, 255, 255]
+guess = []
+pressedButton = None
 
 screen = pygame.display.set_mode(size)
 
@@ -46,6 +48,7 @@ while True:
                     # prints current location of mouse
                     print("Button pressed: " + button.color.name)
                     button.pressed()
+                    pressedButton = button
 
         if event.type == pygame.MOUSEBUTTONUP:
             mouse_pos = event.pos  # gets mouse position
@@ -56,15 +59,14 @@ while True:
                 if button.rect.collidepoint(mouse_pos):
                     # prints current location of mouse
                     print("Button released: " + button.color.name)
+                    if(pressedButton and pressedButton == button):
+                        button.addColor(guess)
+                        print(guess)
+            pressedButton = None
 
     screen.fill(bg)
     for button in buttons:
         pygame.draw.rect(screen, button.getGUIColor(), button.rect)  # draw button
-        # print(button.color)
-    # pygame.draw.rect(screen, [255, 0, 0], button1)
-    # pygame.draw.rect(screen, [0, 255, 0], button2)
-    # pygame.draw.rect(screen, [0, 0, 255], button3)
-    # pygame.draw.rect(screen, [0, 255, 255], button4)
 
     pygame.display.update()
     clock.tick(fps)

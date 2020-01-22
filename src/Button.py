@@ -21,8 +21,12 @@ class Button():
             newColor.append(round(self.color.value[i]*darken[i]))
         self.guiColor = newColor
 
+
     def resetGUIColor(self):
         self.guiColor = self.color.value
 
     def getGUIColor(self):
         return self.guiColor
+
+    def addColor(self,list):
+        list.append(self.color)
