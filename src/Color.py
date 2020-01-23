@@ -10,6 +10,7 @@ class Color(Enum):
     MAROON = [128,0,0]
     ORANGE = [245,130,48]
     BLACK = [0,0,0]
+    LIGHT_GREY = [217, 207, 206]
 
     @staticmethod
     def toColor(text):

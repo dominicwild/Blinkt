@@ -1,8 +1,7 @@
 class ReactiveButton():
-
     isPressed = False
 
-    def __init__(self,guiColor):
+    def __init__(self, guiColor):
         self.guiColor = guiColor
 
     def pressed(self):
