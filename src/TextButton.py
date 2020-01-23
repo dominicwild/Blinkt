@@ -1,15 +1,17 @@
 import pygame
 from Color import Color
+from ReactiveButton import ReactiveButton
 
 
-class TextButton():
+class TextButton(ReactiveButton):
 
-    def __init__(self, screen, text, x, y, padding=50,bg=[217, 207, 206]):
+    def __init__(self, screen, text, x, y, padding=50,color=[217, 207, 206]):
+        ReactiveButton.__init__(self,color)
         self.x = x
         self.y = y
         self.text = text
         self.screen = screen
-        self.bg = bg
+        self.color = color
         self.font = pygame.font.Font(None, 40)
         self.padding = padding
 
@@ -22,5 +24,5 @@ class TextButton():
         rect.center = self.rect.center
 
 
-        pygame.draw.rect(self.screen, self.bg, self.rect)
+        pygame.draw.rect(self.screen, self.color, self.rect)
         self.screen.blit(rend, rect)

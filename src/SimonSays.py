@@ -30,6 +30,7 @@ class SimonSays():
     scoreFile = "scores.csv"
     pressedButton = None
     playing = False
+    screen = None
 
     def __init__(self):
         self.addButton(Color.RED, [0, 1])
@@ -303,14 +304,14 @@ class SimonSays():
 
     def guiMode(self):
         pygame.init()
-        pygame.font.init()
         size = width, height = [1000, 900]
         boardWidth, boardHeight = [width, height * 0.8]
         boardMidPoint = (boardWidth / 2, boardHeight / 2)
         self.playing = True
 
-        screen = pygame.display.set_mode(size)
-        canvas = Canvas(screen)
+
+        self.screen = pygame.display.set_mode(size)
+        canvas = Canvas(self.screen)
 
         buttonHeight = boardHeight / 2
         buttonWidth = boardWidth / 2
@@ -328,12 +329,12 @@ class SimonSays():
         submitRectLeft = bottomMidPointX
         submitRectTop = bottomMidPointY
 
-        guessButton = TextButton(screen, "Submit Guess", submitRectLeft, submitRectTop)
+        self.guessButton = TextButton(self.screen, "Submit Guess", submitRectLeft, submitRectTop)
 
-        canvas.add(guessButton)
+        canvas.add(self.guessButton)
 
         for i in range(len(rects)):
-            self.buttons[i].setDraw(screen, rects[i])
+            self.buttons[i].setDraw(self.screen, rects[i])
             canvas.add(self.buttons[i])
 
         while self.playing:
@@ -346,7 +347,7 @@ class SimonSays():
     def handleEvents(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                pygame.display.set_mode([1,1])
                 self.playing = False
                 break
 
@@ -354,9 +355,11 @@ class SimonSays():
                 mousePos = event.pos
                 for button in self.buttons:
                     if (button.rect.collidepoint(mousePos)):
-                        button.hovering()
+                        if(not self.pressedButton):
+                            button.hovering()
                     else:
-                        button.resetGUIColor()
+                        if(not self.pressedButton == button):
+                            button.resetGUIColor()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mousePos = event.pos  # gets mouse position
@@ -381,6 +384,10 @@ class SimonSays():
                         if (self.pressedButton and self.pressedButton == button):
                             button.addColor(self.sequence)
                             print(self.sequence)
+
+                if self.guessButton.rect.collidepoint(mousePos):
+                    self.guessButton.reset()
+
                 self.pressedButton = None
 
             # If mouse has left screen
