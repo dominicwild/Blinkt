@@ -5,6 +5,8 @@ import os
 import csv
 from Button import Button
 from Color import Color
+from Canvas import Canvas
+from TextButton import TextButton
 import pygame
 import sys
 
@@ -301,33 +303,43 @@ class SimonSays():
 
     def guiMode(self):
         pygame.init()
-        self.clock = pygame.time.Clock()
-        self.fps = 60
+        pygame.font.init()
         size = width, height = [1000, 900]
-        midpoint = (width / 2, height / 2)
-        self.bg = [255, 255, 255]
-        guess = []
+        boardWidth, boardHeight = [width, height * 0.8]
+        boardMidPoint = (boardWidth / 2, boardHeight / 2)
         self.playing = True
 
-        self.screen = pygame.display.set_mode(size)
+        screen = pygame.display.set_mode(size)
+        canvas = Canvas(screen)
 
-        buttonHeight = height / 2
-        buttonWidth = width / 2
+        buttonHeight = boardHeight / 2
+        buttonWidth = boardWidth / 2
 
-        rect1 = pygame.Rect(midpoint[0], midpoint[1], buttonWidth, buttonHeight)
-        rect2 = pygame.Rect(midpoint[0] - buttonWidth, midpoint[1], buttonWidth, buttonHeight)
-        rect3 = pygame.Rect(midpoint[0] - buttonWidth, midpoint[1] - buttonHeight, buttonWidth, buttonHeight)
-        rect4 = pygame.Rect(midpoint[0], midpoint[1] - buttonHeight, buttonWidth, buttonHeight)
+        rect1 = pygame.Rect(boardMidPoint[0], boardMidPoint[1], buttonWidth, buttonHeight)
+        rect2 = pygame.Rect(boardMidPoint[0] - buttonWidth, boardMidPoint[1], buttonWidth, buttonHeight)
+        rect3 = pygame.Rect(boardMidPoint[0] - buttonWidth, boardMidPoint[1] - buttonHeight, buttonWidth, buttonHeight)
+        rect4 = pygame.Rect(boardMidPoint[0], boardMidPoint[1] - buttonHeight, buttonWidth, buttonHeight)
 
         rects = [rect1, rect2, rect3, rect4]
 
+        diffHeight = height - boardHeight
+        bottomMidPointX = boardWidth / 2
+        bottomMidPointY = boardHeight + diffHeight / 2
+        submitRectLeft = bottomMidPointX
+        submitRectTop = bottomMidPointY
+
+        guessButton = TextButton(screen, "Submit Guess", submitRectLeft, submitRectTop)
+
+        canvas.add(guessButton)
+
         for i in range(len(rects)):
-            self.buttons[i].setDraw(self.screen, rects[i])
+            self.buttons[i].setDraw(screen, rects[i])
+            canvas.add(self.buttons[i])
 
         while self.playing:
-
             self.handleEvents()
-            self.draw()
+            if (self.playing):
+                canvas.draw()
 
         self.resetGameState()
 
@@ -338,24 +350,32 @@ class SimonSays():
                 self.playing = False
                 break
 
+            if event.type == pygame.MOUSEMOTION:
+                mousePos = event.pos
+                for button in self.buttons:
+                    if (button.rect.collidepoint(mousePos)):
+                        button.hovering()
+                    else:
+                        button.resetGUIColor()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos  # gets mouse position
+                mousePos = event.pos  # gets mouse position
 
                 # checks if mouse position is over the button
                 for button in self.buttons:
-                    if button.rect.collidepoint(mouse_pos):
+                    if button.rect.collidepoint(mousePos):
                         # prints current location of mouse
                         print("Button pressed: " + button.color.name)
                         button.pressed()
                         self.pressedButton = button
 
             if event.type == pygame.MOUSEBUTTONUP:
-                mouse_pos = event.pos  # gets mouse position
+                mousePos = event.pos  # gets mouse position
 
                 # checks if mouse position is over the button
                 for button in self.buttons:
-                    button.resetGUIColor()
-                    if button.rect.collidepoint(mouse_pos):
+                    button.reset()
+                    if button.rect.collidepoint(mousePos):
                         # prints current location of mouse
                         print("Button released: " + button.color.name)
                         if (self.pressedButton and self.pressedButton == button):
@@ -363,11 +383,7 @@ class SimonSays():
                             print(self.sequence)
                 self.pressedButton = None
 
-    def draw(self):
-        if (self.playing):
-            self.screen.fill(self.bg)
-            for button in self.buttons:
-                pygame.draw.rect(self.screen, button.getGUIColor(), button.rect)  # draw button
-
-            pygame.display.update()
-            self.clock.tick(self.fps)
+            # If mouse has left screen
+            if not bool(pygame.mouse.get_focused()):
+                for button in self.buttons:
+                    button.reset()

@@ -31,6 +31,8 @@ button3.setDraw(screen, rect3)
 button4 = Button(Color.GREEN, [0])
 button4.setDraw(screen, rect4)
 
+
+
 buttons = [button1, button2, button3, button4]
 
 while True:
@@ -47,7 +49,7 @@ while True:
                 if button.rect.collidepoint(mouse_pos):
                     # prints current location of mouse
                     print("Button pressed: " + button.color.name)
-                    button.pressed()
+                    button.isPressed()
                     pressedButton = button
 
         if event.type == pygame.MOUSEBUTTONUP:
