@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0fa52528-7a85-4bd4-9383-ffbeff1cf3ab" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ColorPanel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Canvas.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SimonSays.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimonSays.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scores.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/scores.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,38 +145,38 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="578" y="333" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579718396628" />
-    <state width="2538" height="284" key="GridCell.Tab.0.bottom" timestamp="1579834886082">
+    <state width="2538" height="284" key="GridCell.Tab.0.bottom" timestamp="1579835925276">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="284" key="GridCell.Tab.0.bottom/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834886082" />
-    <state width="2538" height="284" key="GridCell.Tab.0.center" timestamp="1579834886082">
+    <state width="2538" height="284" key="GridCell.Tab.0.bottom/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835925276" />
+    <state width="2538" height="284" key="GridCell.Tab.0.center" timestamp="1579835925276">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="284" key="GridCell.Tab.0.center/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834886082" />
-    <state width="2538" height="284" key="GridCell.Tab.0.left" timestamp="1579834886081">
+    <state width="2538" height="284" key="GridCell.Tab.0.center/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835925276" />
+    <state width="2538" height="284" key="GridCell.Tab.0.left" timestamp="1579835925276">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="284" key="GridCell.Tab.0.left/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834886081" />
-    <state width="2538" height="284" key="GridCell.Tab.0.right" timestamp="1579834886082">
+    <state width="2538" height="284" key="GridCell.Tab.0.left/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835925276" />
+    <state width="2538" height="284" key="GridCell.Tab.0.right" timestamp="1579835925276">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="284" key="GridCell.Tab.0.right/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834886082" />
-    <state width="2538" height="331" key="GridCell.Tab.1.bottom" timestamp="1579834127291">
+    <state width="2538" height="284" key="GridCell.Tab.0.right/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835925276" />
+    <state width="2538" height="331" key="GridCell.Tab.1.bottom" timestamp="1579835867533">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="331" key="GridCell.Tab.1.bottom/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834127291" />
-    <state width="2538" height="331" key="GridCell.Tab.1.center" timestamp="1579834127291">
+    <state width="2538" height="331" key="GridCell.Tab.1.bottom/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835867533" />
+    <state width="2538" height="331" key="GridCell.Tab.1.center" timestamp="1579835867533">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="331" key="GridCell.Tab.1.center/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834127291" />
-    <state width="2538" height="331" key="GridCell.Tab.1.left" timestamp="1579834127291">
+    <state width="2538" height="331" key="GridCell.Tab.1.center/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835867533" />
+    <state width="2538" height="331" key="GridCell.Tab.1.left" timestamp="1579835867533">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="331" key="GridCell.Tab.1.left/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834127291" />
-    <state width="2538" height="331" key="GridCell.Tab.1.right" timestamp="1579834127291">
+    <state width="2538" height="331" key="GridCell.Tab.1.left/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835867533" />
+    <state width="2538" height="331" key="GridCell.Tab.1.right" timestamp="1579835867533">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2538" height="331" key="GridCell.Tab.1.right/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579834127291" />
+    <state width="2538" height="331" key="GridCell.Tab.1.right/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579835867533" />
     <state x="783" y="331" key="SettingsEditor" timestamp="1579732934303">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -190,9 +190,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/ColorPanel.py</url>
-          <line>16</line>
-          <option name="timeStamp" value="18" />
+          <url>file://$PROJECT_DIR$/src/Canvas.py</url>
+          <line>43</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/SimonSays.py</url>
+          <line>320</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

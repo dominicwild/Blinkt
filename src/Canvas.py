@@ -9,7 +9,7 @@ class Canvas:
 
     def __init__(self, screen, game,drawables=[]):
         self.screen = screen
-        self.drawables = drawables
+        self.drawables = []
         self.game = game
 
     def add(self, drawable):
@@ -41,4 +41,5 @@ class Canvas:
 
     def exit(self):
         pygame.display.set_mode([1, 1])
+        self.drawables = []
         self.game.setPlaying(False)

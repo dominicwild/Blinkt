@@ -385,9 +385,10 @@ class SimonSays():
                           str(self.points) + " points")
                     print("The correct sequence was " + self.getStringSequence())
                     self.storeScore(self.points)
-                    self.resetGameState()
                     self.playing = False
                     canvas.exit()
+                    self.resetGameState()
+                    del canvas
 
                 self.submitted = False
                 self.waiting = False
