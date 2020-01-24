@@ -7,6 +7,7 @@ from Button import Button
 from Color import Color
 from Canvas import Canvas
 from SubmitButton import SubmitButton
+from BackButton import BackButton
 from TextButton import TextButton
 import pygame
 import sys
@@ -335,8 +336,10 @@ class SimonSays():
         submitRectTop = bottomMidPointY
 
         self.submitButton = SubmitButton("Submit Guess", submitRectLeft, submitRectTop, self)
+        self.backButton = BackButton("Back", round(2/3*boardWidth + 0.5*1/3*boardWidth), bottomMidPointY, self)
 
         canvas.add(self.submitButton)
+        canvas.add(self.backButton)
 
         for i in range(len(rects)):
             self.buttons[i].setDraw(self.screen, rects[i])
@@ -404,3 +407,8 @@ class SimonSays():
 
     def setSubmit(self, state):
         self.submitted = state
+
+    def back(self):
+        if(len(self.guess) > 0):
+            self.guess.pop()
+            print(self.guess)
