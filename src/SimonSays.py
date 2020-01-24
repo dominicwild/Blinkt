@@ -10,6 +10,7 @@ from SubmitButton import SubmitButton
 from BackButton import BackButton
 from ColorPanel import ColorPanel
 from TextButton import TextButton
+from Label import Label
 import pygame
 import sys
 
@@ -316,6 +317,7 @@ class SimonSays():
         boardWidth, boardHeight = [width, height * 0.7]
         boardMidPoint = (boardWidth / 2, boardHeight / 2)
         self.playing = True
+        self.points = 0
 
         self.screen = pygame.display.set_mode(size)
         canvas = Canvas(self.screen, self)
@@ -331,7 +333,7 @@ class SimonSays():
         rects = [rect1, rect2, rect3, rect4]
 
         colorPanelWidth, colorPanelHeight = boardWidth, 100
-        self.colorPane = ColorPanel(self,0,boardHeight,colorPanelWidth,colorPanelHeight)
+        self.colorPane = ColorPanel(self, 0, boardHeight, colorPanelWidth, colorPanelHeight)
 
         diffHeight = height - boardHeight + colorPanelHeight
         bottomMidPointX = boardWidth / 2
@@ -340,17 +342,18 @@ class SimonSays():
         submitRectTop = bottomMidPointY
 
         self.submitButton = SubmitButton("Submit Guess", submitRectLeft, submitRectTop, self)
-        self.backButton = BackButton("Back", round(2/3*boardWidth + 0.5*1/3*boardWidth), bottomMidPointY, self)
+        self.backButton = BackButton("Back", round(2 / 3 * boardWidth + 0.5 * 1 / 3 * boardWidth), bottomMidPointY,self)
+        self.pointsLabel = Label(boardWidth * 0.1, bottomMidPointY-13, "Points: " + str(self.points))
 
         canvas.add(self.submitButton)
         canvas.add(self.backButton)
         canvas.add(self.colorPane)
+        canvas.add(self.pointsLabel)
 
         for i in range(len(rects)):
             self.buttons[i].setDraw(self.screen, rects[i])
             canvas.add(self.buttons[i])
 
-        self.points = 0
         print("Playing the GUI version of Simon.")
         mode = "Invalid option"
         while mode == "Invalid option":
@@ -373,11 +376,11 @@ class SimonSays():
                 self.reset()
                 self.waiting = True
 
-            if(self.submitted):
+            if (self.submitted):
                 correct = self.parseGuess(" ".join([color.name[0] for color in self.guess]).lower())
-                print(" ".join([color.name[0] for color in self.guess]).lower())
                 if (correct):
                     self.points += 1 * modifier
+                    self.pointsLabel.setText("Points: " + str(self.points))
                     cls()
                     print("That was correct. You have " + str(self.points) + " points")
                 else:
@@ -415,6 +418,6 @@ class SimonSays():
         self.submitted = state
 
     def back(self):
-        if(len(self.guess) > 0):
+        if (len(self.guess) > 0):
             self.guess.pop()
             print(self.guess)
