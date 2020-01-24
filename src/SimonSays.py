@@ -6,6 +6,7 @@ import csv
 from Button import Button
 from Color import Color
 from Canvas import Canvas
+from SubmitButton import SubmitButton
 from TextButton import TextButton
 import pygame
 import sys
@@ -31,6 +32,10 @@ class SimonSays():
     pressedButton = None
     playing = False
     screen = None
+    resetPressedButton = False
+    waiting = False
+    submitted = False
+    guess = []
 
     def __init__(self):
         self.addButton(Color.RED, [0, 1])
@@ -41,7 +46,7 @@ class SimonSays():
         open(self.scoreFile, "a+").close()
 
     def addButton(self, color, leds):
-        self.buttons.append(Button(color, leds))
+        self.buttons.append(Button(color, leds, self))
 
     def lightButton(self, buttonNum, sleepTime=1):
         button = self.buttons[buttonNum]
@@ -59,6 +64,7 @@ class SimonSays():
 
     def reset(self):
         clear()
+        show()
 
     def getNumberOfButtons(self):
         return len(self.buttons)
@@ -309,9 +315,8 @@ class SimonSays():
         boardMidPoint = (boardWidth / 2, boardHeight / 2)
         self.playing = True
 
-
         self.screen = pygame.display.set_mode(size)
-        canvas = Canvas(self.screen)
+        canvas = Canvas(self.screen, self)
 
         buttonHeight = boardHeight / 2
         buttonWidth = boardWidth / 2
@@ -329,68 +334,73 @@ class SimonSays():
         submitRectLeft = bottomMidPointX
         submitRectTop = bottomMidPointY
 
-        self.guessButton = TextButton(self.screen, "Submit Guess", submitRectLeft, submitRectTop)
+        self.submitButton = SubmitButton("Submit Guess", submitRectLeft, submitRectTop, self)
 
-        canvas.add(self.guessButton)
+        canvas.add(self.submitButton)
 
         for i in range(len(rects)):
             self.buttons[i].setDraw(self.screen, rects[i])
             canvas.add(self.buttons[i])
 
+        self.points = 0
+        print("Playing the GUI version of Simon.")
+        mode = "Invalid option"
+        while mode == "Invalid option":
+            self.renderMenu(["Classic Mode", "Difficulty Mode", "Speed Run Mode"])
+            option = input("Which mode do you want to play? (input the number):\n> ")
+            modes = {"1": self.classicMode, "2": self.difficultyMode, "3": self.speedRunMode}
+            mode = modes.get(option, "Invalid option")
+
         while self.playing:
-            self.handleEvents()
+            canvas.action()
             if (self.playing):
                 canvas.draw()
+            if (self.resetPressedButton):
+                self.resetPressedButton = False
+                self.pressedButton = None
+
+            if (not self.waiting):  # If not waiting for a guess
+                print("Press the sequence of colours that appeared and then submit when you've input the sequence.")
+                modifier = mode()
+                self.reset()
+                self.waiting = True
+
+            if(self.submitted):
+                correct = self.parseGuess(" ".join([color.name[0] for color in self.guess]).lower())
+                print(" ".join([color.name[0] for color in self.guess]).lower())
+                if (correct):
+                    self.points += 1 * modifier
+                    cls()
+                    print("That was correct. You have " + str(self.points) + " points")
+                else:
+                    print("That was incorrect. You finished with " +
+                          str(self.points) + " points")
+                    print("The correct sequence was " + self.getStringSequence())
+                    self.storeScore(self.points)
+                    self.resetGameState()
+                    self.playing = False
+                    canvas.exit()
+
+                self.submitted = False
+                self.waiting = False
+                self.guess = []
 
         self.resetGameState()
 
-    def handleEvents(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.display.set_mode([1,1])
-                self.playing = False
-                break
+    def setPressedButton(self, value, setFlag=True):
+        if (setFlag and value == None):
+            self.resetPressedButton = True
+        else:
+            self.pressedButton = value
 
-            if event.type == pygame.MOUSEMOTION:
-                mousePos = event.pos
-                for button in self.buttons:
-                    if (button.rect.collidepoint(mousePos)):
-                        if(not self.pressedButton):
-                            button.hovering()
-                    else:
-                        if(not self.pressedButton == button):
-                            button.resetGUIColor()
+    def getPressedButton(self):
+        return self.pressedButton
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mousePos = event.pos  # gets mouse position
+    def setPlaying(self, state):
+        self.playing = state
 
-                # checks if mouse position is over the button
-                for button in self.buttons:
-                    if button.rect.collidepoint(mousePos):
-                        # prints current location of mouse
-                        print("Button pressed: " + button.color.name)
-                        button.pressed()
-                        self.pressedButton = button
+    def getGuess(self):
+        return self.guess
 
-            if event.type == pygame.MOUSEBUTTONUP:
-                mousePos = event.pos  # gets mouse position
-
-                # checks if mouse position is over the button
-                for button in self.buttons:
-                    button.reset()
-                    if button.rect.collidepoint(mousePos):
-                        # prints current location of mouse
-                        print("Button released: " + button.color.name)
-                        if (self.pressedButton and self.pressedButton == button):
-                            button.addColor(self.sequence)
-                            print(self.sequence)
-
-                if self.guessButton.rect.collidepoint(mousePos):
-                    self.guessButton.reset()
-
-                self.pressedButton = None
-
-            # If mouse has left screen
-            if not bool(pygame.mouse.get_focused()):
-                for button in self.buttons:
-                    button.reset()
+    def setSubmit(self, state):
+        self.submitted = state

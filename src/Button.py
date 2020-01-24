@@ -1,18 +1,20 @@
 import pygame
 from ReactiveButton import ReactiveButton
+from DrawableButton import DrawableButton
 
-class Button(ReactiveButton):
+
+class Button(DrawableButton):
     screen = None
     rect = None
+
     # isPressed = False
 
-    def __init__(self, color, leds, screen=None):
-        ReactiveButton.__init__(self,color.value)
+    def __init__(self, color, leds, game):
+        DrawableButton.__init__(self, color, game)
         self.color = color
         self.leds = leds
         # self.guiColor = color.value
         self.hoverColor = [i * 0.75 for i in color.value]
-        self.screen = screen
 
     def toString(self):
         "Color: " + self.color.name + "\n" + self.leds.toString()
@@ -21,26 +23,17 @@ class Button(ReactiveButton):
         self.screen = screen
         self.rect = rect
 
-    def draw(self):
-        pygame.draw.rect(self.screen, self.guiColor, self.rect)
-
-    def getGUIColor(self):
-        return self.guiColor
-
     def addColor(self, list):
         list.append(self.color)
 
-    def reset(self):
-        self.resetGUIColor()
-        self.isPressed = False
+    def action(self, event):
+        if event.type == pygame.MOUSEBUTTONUP:
+            mousePos = event.pos  # gets mouse position
 
-    def resetGUIColor(self):
-        self.guiColor = self.color.value
+            if self.rect.collidepoint(mousePos):
+                print("Button released: " + self.color.name)
+                if (self.game.getPressedButton() and self.game.getPressedButton() == self):
+                    self.addColor(self.game.getGuess())
+                    print(self.game.getGuess())
 
-    # def pressed(self):
-    #     self.guiColor = [i * 0.5 for i in self.color.value]  # Darken the colour
-    #     self.isPressed = True
-    #
-    # def hovering(self):
-    #     if (not self.isPressed):
-    #         self.guiColor = self.hoverColor
+        DrawableButton.action(self, event)

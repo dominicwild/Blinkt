@@ -7,9 +7,10 @@ class Canvas:
     clock = pygame.time.Clock()
     bg = Color.WHITE.value
 
-    def __init__(self, screen, drawables=[]):
+    def __init__(self, screen, game,drawables=[]):
         self.screen = screen
         self.drawables = drawables
+        self.game = game
 
     def add(self, drawable):
         if (drawable == None):
@@ -23,7 +24,21 @@ class Canvas:
     def draw(self):
         self.screen.fill(self.bg)
         for drawable in self.drawables:
-            drawable.draw()
+            drawable.draw(self.screen)
 
         pygame.display.update()
         self.clock.tick(self.fps)
+
+    def action(self):
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                self.exit()
+                break
+
+            for actionable in self.drawables:
+                actionable.action(event)
+
+    def exit(self):
+        pygame.display.set_mode([1, 1])
+        self.game.setPlaying(False)

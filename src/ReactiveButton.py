@@ -12,9 +12,9 @@ class ReactiveButton():
         if (not self.isPressed):
             self.guiColor = self.hoverColor
 
-    # def resetGUIColor(self):
-    #     self.guiColor = self.color.value
-    #
-    # def reset(self):
-    #     self.resetGUIColor()
-    #     self.isPressed = False
+    def resetGUIColor(self):
+        self.guiColor = self.color.value
+
+    def reset(self):
+        self.resetGUIColor()
+        self.isPressed = False

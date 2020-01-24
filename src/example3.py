@@ -49,7 +49,7 @@ while True:
                 if button.rect.collidepoint(mouse_pos):
                     # prints current location of mouse
                     print("Button pressed: " + button.color.name)
-                    button.isPressed()
+                    button.pressed()
                     pressedButton = button
 
         if event.type == pygame.MOUSEBUTTONUP:
