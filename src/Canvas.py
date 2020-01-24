@@ -5,7 +5,7 @@ class Canvas:
     drawables = []  # All objects that have a "draw" method
     fps = 60
     clock = pygame.time.Clock()
-    bg = Color.WHITE.value
+    bg = Color.BLACK.value
 
     def __init__(self, screen, game,drawables=[]):
         self.screen = screen

@@ -8,6 +8,7 @@ from Color import Color
 from Canvas import Canvas
 from SubmitButton import SubmitButton
 from BackButton import BackButton
+from ColorPanel import ColorPanel
 from TextButton import TextButton
 import pygame
 import sys
@@ -312,7 +313,7 @@ class SimonSays():
     def guiMode(self):
         pygame.init()
         size = width, height = [1000, 900]
-        boardWidth, boardHeight = [width, height * 0.8]
+        boardWidth, boardHeight = [width, height * 0.7]
         boardMidPoint = (boardWidth / 2, boardHeight / 2)
         self.playing = True
 
@@ -329,7 +330,10 @@ class SimonSays():
 
         rects = [rect1, rect2, rect3, rect4]
 
-        diffHeight = height - boardHeight
+        colorPanelWidth, colorPanelHeight = boardWidth, 100
+        self.colorPane = ColorPanel(self,0,boardHeight,colorPanelWidth,colorPanelHeight)
+
+        diffHeight = height - boardHeight + colorPanelHeight
         bottomMidPointX = boardWidth / 2
         bottomMidPointY = boardHeight + diffHeight / 2
         submitRectLeft = bottomMidPointX
@@ -340,6 +344,7 @@ class SimonSays():
 
         canvas.add(self.submitButton)
         canvas.add(self.backButton)
+        canvas.add(self.colorPane)
 
         for i in range(len(rects)):
             self.buttons[i].setDraw(self.screen, rects[i])
